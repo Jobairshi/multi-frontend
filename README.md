@@ -1,36 +1,163 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Multi-Layered Cache Frontend
 
-## Getting Started
+A Next.js 15 frontend application with React Query, Redux Toolkit, and TypeScript integration. This application connects to the Multi-Layered Cache Backend for news management and authentication.
 
-First, run the development server:
+## Features
+
+- ✨ **Next.js 15** with App Router
+- 🎨 **Tailwind CSS** for styling
+- 🔄 **React Query (TanStack Query)** for server state management
+- 🗃️ **Redux Toolkit** for client state management
+- 🔐 **JWT Authentication** with token management
+- 📰 **News Management** (CRUD operations)
+- 🌓 **Dark Mode** support
+- 🎯 **TypeScript** for type safety
+- 📱 **Responsive Design**
+
+## Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Install dependencies
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Configuration
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Create a `.env.local` file:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8080
+```
 
-## Learn More
+## Running the App
 
-To learn more about Next.js, take a look at the following resources:
+Make sure the backend is running on `http://localhost:8080` first!
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+# Development mode
+pnpm dev
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# Build for production
+pnpm build
 
-## Deploy on Vercel
+# Run production build
+pnpm start
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The app will be available at `http://localhost:3000`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Architecture
+
+### State Management Strategy
+
+This application uses a **hybrid state management approach**:
+
+#### 1. Redux Toolkit (Client State)
+- **Purpose**: Tracks current user authentication state
+- **State**:
+  - `currentUser`: User object or null
+  - `isAuthenticated`: Boolean flag
+  - `isLoading`: Loading state
+
+#### 2. React Query (Server State)
+- **Purpose**: Manages all API calls and server data
+- **Features**:
+  - Automatic caching (matches backend cache TTL)
+  - Optimistic updates
+  - Automatic refetching
+  - Loading and error states
+
+### API Architecture
+
+#### Client-Side API (`callApi`)
+- Used in **Client Components**
+- Automatically adds JWT token from localStorage
+- Handles 401 errors (redirects to sign in)
+
+#### Server-Side API (`serverApi`)
+- Used in **Server Components** and API routes
+- Can accept token as parameter or read from cookies
+- Direct server-to-server communication
+
+## Project Structure
+
+```
+app/
+├── auth/signin/page.tsx         # Sign in page
+├── auth/signup/page.tsx         # Sign up page
+├── news/[id]/page.tsx           # News detail page
+├── news/create/page.tsx         # Create news page
+├── news/my-news/page.tsx        # My news page
+├── layout.tsx                   # Root layout with providers
+└── page.tsx                     # Home page
+
+components/
+├── auth/                        # Auth forms
+├── news/                        # News components
+├── layout/                      # Navigation
+└── providers/                   # Context providers
+
+lib/
+├── api/                         # API utilities
+├── hooks/                       # React Query hooks
+├── store/                       # Redux store
+├── types/                       # TypeScript types
+└── utils/                       # Utilities
+```
+
+## React Query Hooks
+
+### Authentication
+- `useSignUp()` - Create account
+- `useSignIn()` - Login
+- `useCurrentUser()` - Get current user
+- `useLogout()` - Logout
+
+### News
+- `useNews()` - Get all news (60s cache)
+- `useNewsDetail(id)` - Get single news (30s cache)
+- `useMyNews()` - Get user's news
+- `useCreateNews()` - Create article
+- `useUpdateNews(id)` - Update article
+- `useDeleteNews()` - Delete article
+
+## Pages & Routes
+
+### Public Routes
+- `/` - Home (news list)
+- `/news/[id]` - News detail
+- `/auth/signin` - Sign in
+- `/auth/signup` - Sign up
+
+### Protected Routes
+- `/news/create` - Create news
+- `/news/my-news` - Manage your news
+
+## Testing the App
+
+1. **Sign Up**: Navigate to `/auth/signup` and create an account
+2. **Sign In**: Login with your credentials
+3. **Create News**: Click "Create News" and publish an article
+4. **View News**: Browse and read articles
+5. **Manage News**: View and delete your articles in "My News"
+
+## Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `NEXT_PUBLIC_API_URL` | Backend API URL | `http://localhost:8080` |
+
+## Technologies Used
+
+- Next.js 15
+- React 19
+- TypeScript 5
+- Tailwind CSS 4
+- React Query 5
+- Redux Toolkit 2
+- Axios
+
+## License
+
+UNLICENSED
+
