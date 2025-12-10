@@ -4,6 +4,7 @@ import "./globals.css";
 import ReduxProvider from "@/components/providers/ReduxProvider";
 import ReactQueryProvider from "@/components/providers/ReactQueryProvider";
 import AuthInitializer from "@/components/providers/AuthInitializer";
+import ServiceWorkerManager from "@/components/providers/ServiceWorkerManager";
 import Navbar from "@/components/layout/Navbar";
 
 const geistSans = Geist({
@@ -34,6 +35,7 @@ export default function RootLayout({
         <ReduxProvider>
           <ReactQueryProvider>
             <AuthInitializer>
+              <ServiceWorkerManager />
               <Navbar />
               <main className="min-h-screen bg-zinc-50 dark:bg-black">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
